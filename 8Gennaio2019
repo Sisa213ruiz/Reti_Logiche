@@ -25,15 +25,15 @@
        sette: .ASCII " sette " 
        otto: .ASCII " otto " 
        nove: .ASCII " nove " 
-       numeri: .LONG zero, uno, due, tre, quattro, cinque, sei, sette, otto, nove 
-       lunghezze: .BYTE 6, 5, 5, 5, 9, 8, 5, 7, 6, 6 
-       stringa: .FILL 22, 1 
-.TEXT _main: NOP
+      numeri: .LONG zero, uno, due, tre, quattro, cinque, sei, sette, otto, nove 
+   lunghezze: .BYTE 6, 5, 5, 5, 9, 8, 5, 7, 6, 6 
+     stringa: .FILL 22, 1 
+.TEXT   _main: NOP
        punto1: MOV $22, %CX 
                LEA stringa, %EBX 
                CALL inline 
-       punto2: MOV $0, %ESI 
-               MOV $0, %CX 
+      punto2: MOV $0, %ESI 
+              MOV $0, %CX 
                MOV $0, %DX
        ciclo: MOV $0, %EAX 
               MOVB stringa(%ESI), %AL 
@@ -58,5 +58,47 @@
               JNE punto1 
               XOR %EAX, %EAX 
               RET .INCLUDE "C:/amb_GAS/utility" 
-       
+
+
+
+SOLUZIONE ALTERNATIVA
+
+#========================================================================= # 
+# ############################# 
+# soluzione due, che tiene conto del consiglio. Tutte le stringhe sono allineati a strlen(" quattro ")=9 
+#############################
+
+.DATA    numeri: .ASCII " zero uno due tre quattro cinque sei sette otto nove "
+        stringa: .FILL 22, 1 
+.TEXT     _main: NOP
+         punto1: MOV $22, %CX 
+                 LEA stringa, %EBX 
+                 CALL inline 
+         punto2: MOV $0, %ESI 
+                 MOV $0, %DI 
+                 MOV $9, %CX 
+          ciclo: MOV $0, %EAX 
+                 MOVB stringa(%ESI), %AL 
+                 CMP $13, %AL 
+                 JE fineciclo
+                 CMP $'0', %AL 
+                 JB niente 
+                 CMP $'9', %AL 
+                 JA niente 
+                 MOV $1, %DI 
+# e' necessario tornare al punto 1 a fine ciclo 
+                 SUB $'0', %AL 
+                 LEA numeri(%EAX,%EAX,8), %EBX 
+# mette in EBX l'indirizzo con offset 9 x EAX (9 sono i caratteri della stringa di lunghezza massima) 
+                 CALL outmess 
+                 JMP next 
+         niente: CALL outchar 
+           next: INC %ESI 
+                 JMP ciclo 
+      fineciclo: CALL newline 
+                 CMP $0, %DI 
+                 JNE punto1 
+                 XOR %EAX, %EAX 
+                 RET .INCLUDE "C:/amb_GAS/utility" 
+
        
