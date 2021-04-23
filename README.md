@@ -1,2 +1,2 @@
 # Reti_Logiche
-Prove pratiche sul linguaggio assembler e soluzioni
+Prove pratiche sul linguaggio assembler con soluzioni
